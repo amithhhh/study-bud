@@ -3,7 +3,16 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+
+class Topic(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
 class Room(models.Model):
+    host = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
+    topic = models.ForeignKey(Topic,on_delete=models.SET_NULL,null=True)
     name = models.CharField(max_length=200)
     description = models.TextField(null=True,blank=True)
     #participants = 
@@ -14,7 +23,11 @@ class Room(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['-updated','-created']#if use only updated and created it do the opposite
+
 class Message(models.Model):
+    User = models.ForeignKey(User,on_delete=models.CASCADE)
     room = models.ForeignKey(Room,on_delete=models.CASCADE)
     body = models.TextField()
     updated = models.DateTimeField(auto_now=True)
